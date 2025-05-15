@@ -33,7 +33,7 @@ with open("C:\\Users\\alons\\OneDrive\\Escritorio\\Table Project v3.txt", "r", e
 lineas = re.split(r'\s{2,}', contenido.strip())
 
 # Estructurar las filas correctamente (cada 8 elementos es una fila completa)
-datos_estructurados = [lineas[i:i+8] for i in range(0, len(lineas), 8)]
+datos_estructurados = [lineas[i:i+8] for i in range(0, len(lineas), 8)] 
 
 # Guardar en CSV
 with open("datos_v3.csv", "w", newline='', encoding="utf-8") as file:
