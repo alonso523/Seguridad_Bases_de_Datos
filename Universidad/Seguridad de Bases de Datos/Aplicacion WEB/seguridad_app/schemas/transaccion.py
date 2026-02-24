@@ -5,9 +5,28 @@ class TransaccionBase(BaseModel):
     monto: float
     fecha: date
     categoria: str
-class TransaccionCreate(TransaccionBase):
-    pass
+class TransaccionCreate(BaseModel):
+    descripcion: str
+    monto: float
+    fecha: date
+    tipo: str
+    categoria_id: int
+
+class CategoriaResponse(BaseModel):
+    id: int
+    nombre: str
+
+    class Config:
+        orm_mode = True
+        
 class TransaccionResponse(TransaccionBase):
     id: int
-class Config:
+    descripcion: str
+    monto: float
+    fecha: date
+    tipo: str
+    categoria: CategoriaResponse
+
+    class Config:
         orm_mode = True
+
