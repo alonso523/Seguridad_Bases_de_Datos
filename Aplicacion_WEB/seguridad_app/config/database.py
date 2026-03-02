@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 params = urllib.parse.quote_plus(
     "DRIVER={ODBC Driver 18 for SQL Server};"
-    "SERVER=localhost;"
+    "SERVER=sqlserver;"                       ## Cambio clave para hacer que funcione el Docker-compose
     "DATABASE=FinanzasDB;"
     "UID=finanzas_user;"
     "PWD=Finanzas2024*;"
