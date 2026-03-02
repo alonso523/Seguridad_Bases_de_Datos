@@ -1,0 +1,29 @@
+services:
+  api:
+    build: .
+    depends_on:
+      - sqlserver
+    environment:
+      - DB_SERVER=sqlserver
+      - DB_NAME=FinanzasDB
+      - DB_USER=finanzas_user
+      - DB_PASSWORD=Finanzas2024*
+    ports:
+      - "8000:8000"
+    networks:
+      - appnet
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Finanzas2024*
+    ports:
+      - "1433:1433"
+    networks:
+      - appnet
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+
+networks:
+  appnet:
