@@ -1,0 +1,45 @@
+<body>
+
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h1>Transacciones registradas</h1>
+        <a href="/transacciones/crear" style="padding:8px 12px; background:#4CAF50; color:white; text-decoration:none; border-radius:4px;">
+            + Nueva transacción
+        </a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Monto</th>
+                <th>Fecha</th>
+                <th>Usuario</th>
+                <th>Categoría</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in transacciones %}
+            <tr>
+                <td>{{ t.monto }}</td>
+                <td>{{ t.fecha }}</td>
+                <td>{{ t.usuario }}</td>
+
+                <!-- Mostrar descripción de la categoría -->
+                <td>
+                    {% if t.categoria %}
+                        {{ t.categoria.descripcion }}
+                    {% else %}
+                        Sin categoría
+                    {% endif %}
+                </td>
+
+                <td>
+                    <a href="/transacciones/{{ t.id }}/editar">Editar</a>
+                    <a href="/transacciones/{{ t.id }}/eliminar" onclick="return confirm('¿Eliminar?')">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
