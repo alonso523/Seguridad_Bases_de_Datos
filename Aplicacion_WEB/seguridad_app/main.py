@@ -1,14 +1,41 @@
 from fastapi import Form
+import pyodbc
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from seguridad_app.config.database import get_db
+from database_initializer.database_initializer import initialize_database
+from contextlib import asynccontextmanager
 from seguridad_app.repositories.transacciones_repo import (obtener_transacciones, crear_transaccion, actualizar_transaccion, eliminar_transaccion, obtener_transaccion_por_id, obtener_categorias)
 
 
 app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    initialize_database()
+    yield  # Aquí inicia la app normalmente
+
+app = FastAPI(lifespan=lifespan)
+
+@app.get("/health")
+def health():
+    try:
+        conn = pyodbc.connect(
+            "DRIVER={ODBC Driver 18 for SQL Server};"
+            "SERVER=sqlserver;"
+            "UID=sa;"
+            "PWD=Finanzas2024*;"
+            "TrustServerCertificate=yes;",
+            timeout=2
+        )
+        conn.close()
+        return {"status": "ok", "database": "connected"}
+    except:
+        return {"status": "ok", "database": "unreachable"}
+
+
 templates = Jinja2Templates(directory="seguridad_app/templates")
 
 # Listar las transacciones
