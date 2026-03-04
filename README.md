@@ -1,1 +1,1 @@
-This contains all the projects from the University
+Este repositorio contiene todo el código de los proyectos del curso de Seguridad de bases de datos
