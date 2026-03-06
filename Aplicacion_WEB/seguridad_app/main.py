@@ -1,4 +1,5 @@
 from fastapi import Form
+from sqlalchemy import text
 import pyodbc
 from fastapi import Depends
 from sqlalchemy.orm import Session
@@ -38,14 +39,21 @@ def health():
 
 templates = Jinja2Templates(directory="seguridad_app/templates")
 
-# Listar las transacciones
-@app.get("/transacciones", response_class=HTMLResponse)
-def listar_transacciones(request: Request, db: Session = Depends(get_db)):
-    transacciones = obtener_transacciones(db)
-    return templates.TemplateResponse(
-        "transacciones.html",
-        {"request": request, "transacciones": transacciones}
-    )
+# # Listar las transacciones  -- Este código no se puede ejecutar con sqlmap
+# @app.get("/transacciones", response_class=HTMLResponse)
+# def listar_transacciones(request: Request, db: Session = Depends(get_db)):
+#     transacciones = obtener_transacciones(db)
+#     return templates.TemplateResponse(
+#         "transacciones.html",
+#         {"request": request, "transacciones": transacciones}
+#     )
+
+# EJEMPLO VULNERABLE - Para utilizar la herramienta sqlmap
+@app.get("/transacciones/vulnerable/{transaccion_id}")
+def vulnerable(transaccion_id: str, db: Session = Depends(get_db)):
+    query = text(f"SELECT * FROM transacciones WHERE id = '{transaccion_id}'")
+    result = db.execute(query).mappings().all()
+    return result
 
 # Crear transacciones por medio del form
 @app.get("/transacciones/crear", response_class=HTMLResponse)
