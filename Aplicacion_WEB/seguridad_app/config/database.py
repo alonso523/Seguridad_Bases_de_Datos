@@ -1,14 +1,19 @@
+import os
+import urllib
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-import urllib
-from sqlalchemy.orm import Session
+
+DB_SERVER = os.getenv("DB_SERVER")
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 params = urllib.parse.quote_plus(
-    "DRIVER={ODBC Driver 18 for SQL Server};"
-    "SERVER=localhost;"
-    "DATABASE=FinanzasDB;"
-    "UID=finanzas_user;"
-    "PWD=Finanzas2024*;"
+    f"DRIVER={{ODBC Driver 18 for SQL Server}};"
+    f"SERVER={DB_SERVER};"
+    f"DATABASE={DB_NAME};"
+    f"UID={DB_USER};"
+    f"PWD={DB_PASSWORD};"
     "TrustServerCertificate=yes;"
 )
 

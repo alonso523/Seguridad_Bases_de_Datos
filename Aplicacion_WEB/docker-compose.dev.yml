@@ -1,0 +1,36 @@
+services:
+  api:
+    build: .
+    depends_on:
+      - sqlserver
+    environment:
+      - DB_SERVER=sqlserver
+      - DB_NAME=FinanzasDB
+      - DB_USER=finanzas_user
+      - DB_PASSWORD=Finanzas2024*
+    ports:
+      - "8000:8000"
+    networks:
+      - appnet
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-CU18-ubuntu-20.04
+    container_name: aplicacion_web-sqlserver-1
+    user: root
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Finanzas2024*
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - mssql_data:/var/opt/mssql
+      - ./sqlmap_results:/root/.local/share/sqlmap
+    networks:
+      - appnet
+
+networks:
+  appnet:
+
+volumes:
+  mssql_data:
