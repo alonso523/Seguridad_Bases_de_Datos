@@ -16,7 +16,7 @@ app = FastAPI()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     initialize_database()
-    yield  # Aquí inicia la app normalmente
+    yield
 
 app = FastAPI(lifespan=lifespan)
 
@@ -24,45 +24,53 @@ app = FastAPI(lifespan=lifespan)
 def health():
     try:
         conn = pyodbc.connect(
-            "DRIVER={ODBC Driver 18 for SQL Server};"
-            "SERVER=sqlserver;"
-            "UID=sa;"
-            "PWD=Finanzas2024*;"
+            f"DRIVER={{ODBC Driver 18 for SQL Server}};"
+            f"SERVER={os.getenv('DB_SERVER')};"
+            f"UID=sa;"
+            f"PWD=Finanzas2024*;"
             "TrustServerCertificate=yes;",
             timeout=2
         )
         conn.close()
         return {"status": "ok", "database": "connected"}
-    except:
+    except Exception as e:
         return {"status": "ok", "database": "unreachable"}
 
 
 templates = Jinja2Templates(directory="seguridad_app/templates")
 
-# # Listar las transacciones  -- Este código no se puede ejecutar con sqlmap
-# @app.get("/transacciones", response_class=HTMLResponse)
-# def listar_transacciones(request: Request, db: Session = Depends(get_db)):
-#     transacciones = obtener_transacciones(db)
-#     return templates.TemplateResponse(
-#         "transacciones.html",
-#         {"request": request, "transacciones": transacciones}
-#     )
+# Versión para qa 
+# Listar las transacciones  -- Este código no se puede ejecutar con sqlmap
+@app.get("/transacciones", response_class=HTMLResponse)
+def listar_transacciones(request: Request, db: Session = Depends(get_db)):
+    transacciones = obtener_transacciones(db)
+    return templates.TemplateResponse(
+        "transacciones.html",
+        {"request": request, "transacciones": transacciones}
+    )
 
-# EJEMPLO VULNERABLE - Para utilizar la herramienta sqlmap
-@app.get("/transacciones/vulnerable/{transaccion_id}")
-def vulnerable(transaccion_id: str, db: Session = Depends(get_db)):
-    query = text(f"SELECT * FROM transacciones WHERE id = '{transaccion_id}'")
-    result = db.execute(query).mappings().all()
-    return result
+# # EJEMPLO VULNERABLE - Para utilizar la herramienta sqlmap   -- Version utilizada en DEV
+# @app.get("/transacciones/vulnerable/{transaccion_id}")
+# def vulnerable(transaccion_id: str, db: Session = Depends(get_db)):
+#     query = text(f"SELECT * FROM transacciones WHERE id = '{transaccion_id}'")
+#     result = db.execute(query).mappings().all()
+#     return result
 
 # Crear transacciones por medio del form
-@app.get("/transacciones/crear", response_class=HTMLResponse)
-def form_crear_transaccion(request: Request, db: Session = Depends(get_db)):
-    categorias = obtener_categorias(db)
-    return templates.TemplateResponse(
-        "crear_transaccion.html",
-        {"request": request, "categorias": categorias}
-    )
+# @app.get("/transacciones/crear", response_class=HTMLResponse)
+# def form_crear_transaccion(request: Request, db: Session = Depends(get_db)):
+#     categorias = obtener_categorias(db)
+#     return templates.TemplateResponse(
+#         "crear_transaccion.html",
+#         {"request": request, "categorias": categorias}
+#     )
+
+# Sección de código utilizando Pydantic para asegurar la sanitización y validación de entrada
+from seguridad_app.schemas.transaccion_schema import TransaccionCreate
+@app.post("/transacciones/crear")
+def crear_transaccion_post(data: TransaccionCreate, db: Session = Depends(get_db)):
+    crear_transaccion(db, data.model_dump())
+    return RedirectResponse("/transacciones", status_code=303)
 
 @app.post("/transacciones/crear")
 def crear_transaccion_post(

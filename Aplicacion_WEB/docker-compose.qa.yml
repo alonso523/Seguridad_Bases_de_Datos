@@ -1,0 +1,35 @@
+services:
+  api-qa:
+    build: .
+    depends_on:
+      - sqlserver-qa
+    environment:
+      - DB_SERVER=sqlserver-qa
+      - DB_NAME=FinanzasDB
+      - DB_USER=finanzas_user
+      - DB_PASSWORD=Finanzas2024*
+    ports:
+      - "8001:8000"  # Puertos modificados para la aplicación en qa
+    networks:
+      - appnet-qa
+
+  sqlserver-qa:
+    image: mcr.microsoft.com/mssql/server:2019-CU18-ubuntu-20.04
+    container_name: aplicacion_web-sqlserver-qa  # Nombre del contenedor diferente para qa
+    user: root
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Finanzas2024*
+    ports:
+      - "1435:1433" #Puertos modificados con respecto a dev para hacer el testeo
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - mssql_data_qa:/var/opt/mssql
+    networks:
+      - appnet-qa
+
+networks:
+  appnet-qa:    # Nombre de red distinta para realizar el ejercicio
+
+volumes:
+  mssql_data_qa:   # Tambien se va a crear un volumen distinto para qa

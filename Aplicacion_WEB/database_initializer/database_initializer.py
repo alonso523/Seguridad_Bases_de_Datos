@@ -4,7 +4,7 @@ import time
 
 CONNECTION_STRING = (
     "DRIVER={ODBC Driver 18 for SQL Server};"
-    "SERVER=sqlserver;"
+    "SERVER=sqlserver-qa;"
     "UID=sa;"
     "PWD=Finanzas2024*;"
     "TrustServerCertificate=yes;"
@@ -23,24 +23,34 @@ def run_sql_file(cursor, path):
             cursor.execute(stmt)
 
 def initialize_database():
-    for _ in range(30):
+    MAX_RETRIES = 30
+    WAIT_SECONDS = 2
+
+    # Esperar a que SQL Server esté listo
+    for i in range(MAX_RETRIES):
         try:
             conn = pyodbc.connect(CONNECTION_STRING, autocommit=True)
+            print("Conexión exitosa a SQL Server")
             break
-        except:
-            time.sleep(1)
+        except Exception as e:
+            print(f"Intento {i+1}/{MAX_RETRIES}: SQL Server no está listo aún...")
+            time.sleep(WAIT_SECONDS)
     else:
         raise Exception("SQL Server no respondió a tiempo")
 
     cursor = conn.cursor()
 
+    # Verificar si la base ya existe
     cursor.execute("SELECT name FROM sys.databases WHERE name='FinanzasDB'")
     exists = cursor.fetchone()
 
     if exists:
+        print("Base de datos ya existe, no se ejecutan scripts.")
         cursor.close()
         conn.close()
         return
+
+    print("Inicializando base de datos...")
 
     scripts = [
         "01_create_database.sql",
@@ -50,7 +60,9 @@ def initialize_database():
 
     for script in scripts:
         path = os.path.join(SQL_DIR, script)
+        print(f"Ejecutando script: {script}")
         run_sql_file(cursor, path)
 
     cursor.close()
     conn.close()
+    print("Base de datos inicializada correctamente.")

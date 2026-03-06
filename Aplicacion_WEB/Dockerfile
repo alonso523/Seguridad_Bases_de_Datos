@@ -1,4 +1,5 @@
 # Una imagen ligera de Python 3.11 para poder ejecutar la aplicación y reducir el tamaño del cotenedor
+# Este Docker file será utilizado para la aplicación en qa con las mejoras
 FROM python:3.11-slim-bookworm
 
 WORKDIR /app
