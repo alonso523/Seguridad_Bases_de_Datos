@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Finanzas Premium{% endblock %}</title>
+    <meta name="description" content="Gestión avanzada y segura de finanzas personales.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Finanzas<span>Pro</span></h1>
+            </div>
+            <nav class="actions">
+                <a href="/transacciones" class="btn btn-outline">🏠 Inicio</a>
+                <a href="/docs" class="btn btn-outline">📑 API Docs</a>
+                <a href="/health" class="btn btn-outline">🛡️ Health</a>
+            </nav>
+        </header>
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer
+            style="margin-top: 4rem; text-align: center; color: var(--text-secondary); font-size: 0.8rem; padding-bottom: 2rem;">
+            &copy; 2026 Seguridad de Bases de Datos - Universidad Cenfotec. LUIS ALONSO CAMPOS LOPEZ
+        </footer>
+    </div>
+
+    <!-- Micro-interactions Script -->
+    <script>
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('mousedown', function () {
+                this.style.transform = 'scale(0.95)';
+            });
+            button.addEventListener('mouseup', function () {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+
+</html>

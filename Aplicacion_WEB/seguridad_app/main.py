@@ -12,13 +12,15 @@ from contextlib import asynccontextmanager
 from seguridad_app.repositories.transacciones_repo import (obtener_transacciones, crear_transaccion, actualizar_transaccion, eliminar_transaccion, obtener_transaccion_por_id, obtener_categorias)
 
 
-app = FastAPI()
+from fastapi.staticfiles import StaticFiles
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     initialize_database()
     yield  # Aquí inicia la app normalmente
 
 app = FastAPI(lifespan=lifespan)
+app.mount("/static", StaticFiles(directory="seguridad_app/static"), name="static")
 
 @app.get("/health")
 def health():
@@ -38,15 +40,16 @@ def health():
 
 
 templates = Jinja2Templates(directory="seguridad_app/templates")
+templates.env.globals.update(hasattr=hasattr)
 
-# # Listar las transacciones  -- Este código no se puede ejecutar con sqlmap
-# @app.get("/transacciones", response_class=HTMLResponse)
-# def listar_transacciones(request: Request, db: Session = Depends(get_db)):
-#     transacciones = obtener_transacciones(db)
-#     return templates.TemplateResponse(
-#         "transacciones.html",
-#         {"request": request, "transacciones": transacciones}
-#     )
+# Listar las transacciones  -- Este código no se puede ejecutar con sqlmap
+@app.get("/transacciones", response_class=HTMLResponse)
+def listar_transacciones(request: Request, db: Session = Depends(get_db)):
+    transacciones = obtener_transacciones(db)
+    return templates.TemplateResponse(
+        "transacciones.html",
+        {"request": request, "transacciones": transacciones}
+    )
 
 # EJEMPLO VULNERABLE - Para utilizar la herramienta sqlmap
 @app.get("/transacciones/vulnerable/{transaccion_id}")

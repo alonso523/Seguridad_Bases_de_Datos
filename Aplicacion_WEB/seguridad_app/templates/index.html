@@ -1,11 +1,23 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ titulo }}</title>
-</head>
-<body>
-    <h1>{{ titulo }}</h1>
-    <p>Bienvenido a mi primera aplicación web con FastAPI.</p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Inicio - FinanzasPro{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 4rem 0; animation: fadeIn 1s ease-out;">
+    <h2 style="font-size: 3rem; margin-bottom: 1.5rem; background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+        Bienvenido a FinanzasPro
+    </h2>
+    <p style="font-size: 1.2rem; color: var(--text-secondary); max-width: 700px; margin: 0 auto 3rem;">
+        La plataforma segura para la gestión de tus movimientos financieros con auditoría integrada.
+    </p>
+    
+    <div style="display: flex; gap: 1.5rem; justify-content: center;">
+        <a href="/transacciones" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
+            📊 Ver Transacciones
+        </a>
+        <a href="/docs" class="btn btn-outline" style="padding: 1rem 2rem; font-size: 1.1rem;">
+            🔍 Documentación API
+        </a>
+    </div>
+</div>
+{% endblock %}
