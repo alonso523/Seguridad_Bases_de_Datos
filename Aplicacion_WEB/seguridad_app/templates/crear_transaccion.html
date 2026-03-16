@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Transacción - FinanzasPro{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 600px; margin: 0 auto; animation: slideDown 0.6s ease-out;">
+    <div style="margin-bottom: 2rem; text-align: center;">
+        <h2 style="font-size: 2rem; color: var(--text-primary);">Nueva Transacción</h2>
+        <p style="color: var(--text-secondary);">Ingrese los detalles para registrar un nuevo movimiento financiero.</p>
+    </div>
+
+    <div class="form-card">
+        <form method="post">
+            <div class="form-group">
+                <label for="descripcion">Descripción del movimiento</label>
+                <input type="text" id="descripcion" name="descripcion" placeholder="Ej: Pago de servicios, Almuerzo..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="monto">Monto (USD)</label>
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary);">$</span>
+                    <input type="number" id="monto" step="0.01" name="monto" style="padding-left: 2rem;" placeholder="0.00" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="categoria_id">Categoría</label>
+                <select id="categoria_id" name="categoria_id" required>
+                    <option value="" disabled selected>Seleccione una categoría</option>
+                    {% for c in categorias %}
+                        <option value="{{ c.id }}">{{ c.descripcion }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary" style="flex: 2; justify-content: center;">
+                    ✅ Guardar Transacción
+                </button>
+                <a href="/transacciones" class="btn btn-outline" style="flex: 1; justify-content: center;">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
